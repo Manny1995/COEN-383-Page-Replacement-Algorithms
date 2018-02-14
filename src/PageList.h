@@ -43,7 +43,8 @@ class PageList {
 
 
 		// I know that this is inefficient, but it beats keeping it in track and updating it as a variable :)
-		int getSize() {
+        // - Dat O(n) runtime tho! :D
+        int getSize() {
 
 			Page *cur = this->head;
 			int res = 0;
@@ -56,7 +57,7 @@ class PageList {
 		}
 
 		void appendPageWithSize(int pSize) {
-			Page *newPage = newPage(pSize);
+			Page *newPage = Page(pSize);
 			this->appendPage(newPage);
 		}
 
