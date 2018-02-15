@@ -13,7 +13,6 @@ class Process {
 		PageList *pageList;
 		PageReplacer *replacer;
 
-
 		// randomize 70%
 		bool shouldAccessCache() {
 

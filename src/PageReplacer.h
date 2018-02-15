@@ -11,11 +11,6 @@ class PageReplacer {
 	// Takes in a page list and returns the evicted page
 	virtual Page* evictPage(PageList *pageList);
 
-	// FIFO
-	virtual Page* evictPage(PageList *pageList) {
-
-	}
-
 };
 
 
