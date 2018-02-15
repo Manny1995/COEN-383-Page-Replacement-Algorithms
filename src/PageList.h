@@ -82,12 +82,27 @@ class PageList {
 		// Shifts the page to the back
 		void shiftPageToBack(int pagePos) {
 			
+            
+            
 		}
 		
 
-		Page *findPage() {
-
+		Page *findPage(string identifier) {
+            
+            Page* currentPage = this->head;
+            
+            while (currentPage != NULL) {
+                
+                if (currentPage->identifier == identifier) {
+                    return currentPage;
+                }
+                
+            }
+            
+            return NULL;
+            
 		}
+    
 
 		bool hasFreePages() {
 			return this->getSize() >= 4;
