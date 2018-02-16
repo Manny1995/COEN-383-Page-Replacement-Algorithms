@@ -1,7 +1,6 @@
-// Immanuel Amirtharaj and Carlos Rivera
+// Immanuel Amirtharaj, Carlos Rivera, Maxen Chung, Isaac Jorgenson, Tasmine Hackson
 // run.cpp
 // The main driver for this
-
 
 #include <stdio.h>
 #include <stdlib.h>

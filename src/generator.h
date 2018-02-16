@@ -1,3 +1,5 @@
+#ifndef GENERATOR_H
+#define GENERATOR_H
 
 #include <iostream>
 
@@ -44,3 +46,5 @@ namespace generator {
 	}
 
 }
+
+#endif
