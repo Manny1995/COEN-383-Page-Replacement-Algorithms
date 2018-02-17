@@ -12,6 +12,10 @@
 // Include page replacement Algorithms
 #include "PageReplacer.h"
 #include "FIFO.h"
+#include "LRU.h"
+#include "LFU.h"
+#include "MFU.h"
+#include "RAND.h"
 
 #include "generator.h"
 
@@ -40,8 +44,13 @@ void startSimulation(PageReplacer *replacer) {
     PageList *freeList = generator::generateFreeList();
     vector<Process *> processList = generator::generateProcessList();
     
-    for (int i = 0; i < 100; i++) {
-        for (int i = 0; i < 100; i++) {
+    
+    vector<Process *>runningProcesses;
+    
+    // seconds
+    for (int i = 0; i < 60; i++) {
+        // milliseconds
+        for (int j = 0; j < 10; j++) {
             
         }
     }

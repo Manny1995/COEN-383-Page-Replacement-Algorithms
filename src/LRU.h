@@ -1,16 +1,14 @@
 
-#ifndef FIFO_H
-#define FIFO_H
+#ifndef LRU_H
+#define LRU_H
 
 #include "PageReplacer.h"
 #include "PageList.h"
 
-class FIFO : public PageReplacer {
-
+class LRU : public PageReplacer {
     public:
         Page *evictPage(PageList *page);
-        FIFO();
-    
 };
+
 
 #endif

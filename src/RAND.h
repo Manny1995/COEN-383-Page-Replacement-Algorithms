@@ -1,16 +1,13 @@
-
-#ifndef FIFO_H
-#define FIFO_H
+#ifndef RAND_H
+#define RAND_H
 
 #include "PageReplacer.h"
 #include "PageList.h"
 
-class FIFO : public PageReplacer {
-
+class RAND : public PageReplacer {
     public:
         Page *evictPage(PageList *page);
-        FIFO();
-    
 };
+
 
 #endif
