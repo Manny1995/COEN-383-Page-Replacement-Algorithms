@@ -1,17 +1,11 @@
 #ifndef PAGELIST_CPP
 #define PAGELIST_CPP
 
+#include "PageList.h"
 
 PageList::PageList() {
 	this->head = NULL;
 	this->tail = head;
-}
-
-PageList::PageList(int numPages, int defaultSize) {
-
-	for (int i = 0; i < numPages; i++) {
-		this->appendPageWithSize(defaultSize);
-	}
 }
 
 
@@ -29,10 +23,6 @@ int PageList::getSize() {
 	return res;
 }
 
-void PageList::appendPageWithSize(int pSize) {
-	Page *newPage = Page(pSize);
-	this->appendPage(newPage);
-}
 
 void PageList::appendPage(Page *newPage) {
 
@@ -52,9 +42,31 @@ void PageList::appendPage(Page *newPage) {
 	}
 }
 
+Page *PageList::getPageAtIndex(int index) {
+    if (index > this->getSize()) {
+        return NULL;
+    }
+    
+    Page *cur = this->head;
+    for (int i = 0; i < index; i++) {
+        
+        if (cur == NULL) {
+            cerr << "ERROR, NULL PAGE" << endl;
+            return NULL;
+        }
+        
+        cur=cur->next;
+    }
+    
+    return cur;
+    
+}
+
 // Shifts the page to the back
 // Should call this when using something like an MFU or LRU algorithm
-void PageList::shiftPageToBack(Page *page) {
+void PageList::shiftPageToBack(int pagePos) {
+    
+    Page *page = this->getPageAtIndex(pagePos);
 
 	if (page == NULL) {
 		cerr << "NULL page, so cannot shift to back" << endl;
@@ -123,6 +135,18 @@ Page *PageList::getFreePages() {
 	return res;
 }
 
+Page *PageList::deleteHead() {
+    
+    Page *res = this->head;
+    if (res == NULL) {
+        cerr << "NO HEAD TO DELETE" << endl;
+    }
+    else {
+        res->next = NULL;
+        this->head = res->next;
+    }
+    return res;
+}
 
 
 #endif

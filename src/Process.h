@@ -6,30 +6,14 @@
 
 class Process {
 	public:
-		string identifier;
+		string pid;
 		int pageSize;
 		int serviceDuration;
-		
-		PageList *pageList;
-		PageReplacer *replacer;
-
-		// randomize 70%
-		bool shouldAccessCache() {
-
-		}
-
-		void accessMemory() {
-
-			bool accessCache = this->shouldAccessCache();
-
-			if (accessCache) {
-				this->replacer()
-			}
-			else {
-
-			}
-		}
-
-}
+        int arrivalTime;
+    
+        PageList *pageList;
+    
+        Process(string pName, int pPageSize, int jArrivalTime, int jServiceDuration);
+};
 
 #endif

@@ -3,10 +3,13 @@
 #define FIFO_H
 
 #include "PageReplacer.h"
+#include "PageList.h"
 
-class FIFO : PageReplacer {
+class FIFO : public PageReplacer {
 
-
+    public:
+        Page *evictPage(PageList *page);
+    
 };
 
 #endif

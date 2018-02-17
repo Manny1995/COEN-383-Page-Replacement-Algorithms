@@ -17,6 +17,7 @@
 
 using namespace std;
 
+
 void help() {
 		cout << "all 	- run all 6 algorithms" << endl;
 		cout << "fifo 	- first come first serve" << endl;
@@ -24,6 +25,14 @@ void help() {
 		cout << "lfu 	- shortest time remaining" << endl;
 		cout << "mfu	- round robin" << endl;
 		cout << "random	- highest priority first non-preemptive" << endl;
+}
+
+
+void startSimulation(PageReplacer *replacer) {
+    
+    PageList *freeList = generator::generateFreeList();
+    
+    
 }
 
 int main(int argc, char* argv[]) {
@@ -37,8 +46,6 @@ int main(int argc, char* argv[]) {
 	string choice = string(argv[1]);
 
 
-
-	PageList *freeList = Generator::
 
 
 	if (choice == "all") {
@@ -64,6 +71,11 @@ int main(int argc, char* argv[]) {
 		help();
 	}
 
+    
+    PageReplacer *replacer = new FIFO();
+    startSimulation(replacer);
+    
 	return 1;
 
 }
+
