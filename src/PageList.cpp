@@ -148,5 +148,14 @@ Page *PageList::deleteHead() {
     return res;
 }
 
+// Hoping this don't segfault ahaha
+void PageList::appendPageList(PageList *pList) {
+    
+    Page *head = pList->head;
+    this->tail->next = head;
+    this->tail = pList->tail;
+    this->tail->next = NULL;
+}
+
 
 #endif

@@ -64,6 +64,8 @@ class PageList {
     
     
         Page *findPage(string identifier);
+    
+        void appendPageList(PageList *pList);
 
 
 };

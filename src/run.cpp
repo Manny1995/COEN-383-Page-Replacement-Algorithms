@@ -1,4 +1,4 @@
-// Immanuel Amirtharaj, Carlos Rivera, Maxen Chung, Isaac Jorgenson, Tasmine Hackson
+// Immanuel Amirtharaj, Carlos Rivera, Maxen Chung, Tasmine Hackson, Isaac Jorgenson
 // run.cpp
 // The main driver for this
 
@@ -24,14 +24,27 @@ void help() {
 		cout << "lru 	- shortest job first" << endl;
 		cout << "lfu 	- shortest time remaining" << endl;
 		cout << "mfu	- round robin" << endl;
-		cout << "random	- highest priority first non-preemptive" << endl;
+		cout << "rand	- highest priority first non-preemptive" << endl;
+}
+
+// add the terminated process' free pages back to the free list
+void processFinished(PageList *freeList, Process *terminatedProcess) {
+    PageList *freePages = terminatedProcess->pageList;
+    freeList->appendPageList(freePages);
+    delete terminatedProcess;
 }
 
 
 void startSimulation(PageReplacer *replacer) {
     
     PageList *freeList = generator::generateFreeList();
+    vector<Process *> processList = generator::generateProcessList();
     
+    for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < 100; i++) {
+            
+        }
+    }
     
 }
 
@@ -63,7 +76,7 @@ int main(int argc, char* argv[]) {
 	else if (choice == "mfu") {
 
 	}
-	else if (choice == "random") {
+	else if (choice == "rand") {
 
 	}
 	else {
