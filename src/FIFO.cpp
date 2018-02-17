@@ -3,6 +3,10 @@
 
 #include "FIFO.h"
 
+FIFO::FIFO() {
+    
+}
+
 Page *FIFO::evictPage(PageList *pList) {
     Page *head = pList->deleteHead();
     return head;

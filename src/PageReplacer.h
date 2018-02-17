@@ -7,9 +7,10 @@
 // gets called by the process class
 class PageReplacer {
 
-	// Takes in a page list and returns the evicted page
-    virtual Page* evictPage(PageList *pageList);
-    PageReplacer();
+    public:
+        // Takes in a page list and returns the evicted page
+        virtual Page* evictPage(PageList *pageList);
+        PageReplacer();
 
 };
 

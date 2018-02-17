@@ -4,6 +4,9 @@
 
 #include "PageReplacer.h"
 
+PageReplacer::PageReplacer() {
+    
+}
 Page *PageReplacer::evictPage(PageList *) {
  
     return NULL;
