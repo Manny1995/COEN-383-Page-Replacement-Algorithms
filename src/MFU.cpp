@@ -12,7 +12,7 @@ Page* MFU::evictPage(list<Page*> &pageList) {
     list<Page*>::iterator iter;
     list<Page*>::iterator targetPagePosition;
     Page* currentPage;
-    Page* mfuPage;
+    Page* mfuPage = NULL;
     int mfuCount = INT_MIN;
     
     for (iter = pageList.begin(); iter != pageList.end(); ++iter) {

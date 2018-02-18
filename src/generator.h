@@ -5,14 +5,17 @@
 
 
 #include "Process.h"
-#include "PageList.h"
+#include "FreeList.h"
 
 
 #include <vector>
 #include <sstream>
+#include <algorithm>
 
 #define FREELIST_SIZE 100
 #define PROCESS_COUNT 150
+
+using namespace std;
 
 namespace generator {
 	
@@ -22,12 +25,6 @@ namespace generator {
         return ss.str();
 	}
     
-    string getPageName(int pNum) {
-        stringstream ss;
-        ss << "Page-" << pNum;
-        return ss.str();
-    }
-
 
 	Process *generateRandomProcess(int pNum) {
 		
@@ -46,29 +43,16 @@ namespace generator {
         return new Process(pName, pNum, pSize, arrivalTime, serviceDuration);
 	}
 
-
-    /*
-	// generates list of pages 100 initially for the 
-	PageList *generateFreeList() {
-
-        PageList *res = new PageList();
-        
-        for (int i = 0; i < FREELIST_SIZE; i++) {
-        
-            Page *newPage = new Page(getPageName(i));
-            res->appendPage(newPage);
-        
+    bool processComp(Process *p, Process *q) {
+        if (p == NULL && q == NULL) {
+            cerr << "SORTING NULL PROCESS THIS SHOULD NOT BE HAPPENING" << endl;
+            return false;
         }
         
-		return res;
-
-	}
-     */
-    
-    FreeList* generateFreeList() {
-        return new FreeList();
+        return p->arrivalTime < q->arrivalTime;
     }
     
+    // Generates a process list and sorts it by arrival time
     vector<Process *> generateProcessList() {
         
         vector<Process *> processList;
@@ -77,6 +61,8 @@ namespace generator {
             Process* newProcess = generator::generateRandomProcess(pageIndex);
             processList.push_back(newProcess);
         }
+        
+        sort(processList.begin(), processList.end(), processComp);
         
         return processList;
         

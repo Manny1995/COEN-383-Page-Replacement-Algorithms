@@ -12,7 +12,7 @@ Page* LRU::evictPage(list<Page*> &pageList) {
     list<Page*>::iterator iter;
     list<Page*>::iterator targetPagePosition;
     Page* currentPage;
-    Page* lruPage;
+    Page* lruPage = NULL;
     int lruTime = INT_MAX;
     
     for (iter = pageList.begin(); iter != pageList.end(); ++iter) {

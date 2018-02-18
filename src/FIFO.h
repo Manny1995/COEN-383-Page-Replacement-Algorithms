@@ -3,7 +3,7 @@
 #define FIFO_H
 
 #include "PageReplacer.h"
-#include "PageList.h"
+#include "FreeList.h"
 
 class FIFO : public PageReplacer {
 

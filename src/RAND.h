@@ -2,7 +2,7 @@
 #define RAND_H
 
 #include "PageReplacer.h"
-#include "PageList.h"
+#include "FreeList.h"
 
 class RAND : public PageReplacer {
     

@@ -1,12 +1,12 @@
-#ifndef PAGELIST_H
-#define PAGELIST_H
+#ifndef FREELIST_H
+#define FREELIST_H
 
 #include <iostream>
 #include <string>
 
 #include "Process.h"
 
-#include "page.h"
+#include "Page.h"
 
 using namespace std;
 

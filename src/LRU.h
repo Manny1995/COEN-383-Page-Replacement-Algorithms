@@ -3,7 +3,7 @@
 #define LRU_H
 
 #include "PageReplacer.h"
-#include "PageList.h"
+#include "FreeList.h"
 
 class LRU : public PageReplacer {
     
