@@ -1,4 +1,8 @@
-#include "page.h"
+#ifndef PAGE_CPP
+#define PAGE_CPP
+
+#include "Page.h"
+#include <sstream>
 
 Page::Page() {
     this->identifier = "NO ID";
@@ -7,11 +11,6 @@ Page::Page() {
     this->timesReferenced = 0;
     this->processID = -1;
     this->next = NULL;
-}
-
-Page::Page(string identifier) {
-    Page();
-    this->identifier = identifier;
 }
 
 void Page::assignProcessOwner(Process* newOwner, int newID) {
@@ -27,3 +26,5 @@ void Page::removeProcessOwner() {
     this->timesReferenced = 0;
     this->processID = -1;
 }
+
+#endif

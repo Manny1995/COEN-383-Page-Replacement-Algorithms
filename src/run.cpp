@@ -17,7 +17,16 @@
 #include "MFU.h"
 #include "RAND.h"
 
+// Include generation
 #include "generator.h"
+
+// Include Pagelist and Page Classes
+#include "FreeList.h"
+#include "Page.h"
+
+
+#include "printer.h"
+
 
 #define STARTING_PAGE_ID 0
 
@@ -135,7 +144,7 @@ vector<Process*> updateRemainingProcesses(vector<Process*> totalProcesses, vecto
     
     vector<Process*>::iterator iter;
     vector<Process*>::iterator foundPosition;
-    Process* currentProcess;
+    Process* currentProcess = NULL;
     
     for (iter = runningProcesses.begin(); iter != runningProcesses.end(); ++iter) {
         
@@ -165,15 +174,14 @@ void referencePages(vector<Process*> runningProcesses, PageReplacer* replacer) {
         } else {
             totalMisses++;
         }
-        
     }
-    
 }
 
 void runSimulation(PageReplacer *replacer) {
     
     // PageList *freeList = generator::generateFreeList();
-    FreeList* freeList = generator::generateFreeList();
+    FreeList* freeList = new FreeList();
+    
     vector<Process *> processList = generator::generateProcessList();
     
     vector<Process *> runningProcesses;
@@ -210,23 +218,12 @@ void runSimulation(PageReplacer *replacer) {
     
 }
 
-void printReportHeader(string algorithm) {
+
+void getNextPage(Process *p) {
     
-    cout << "====================================================================" << endl;
-    cout << algorithm << endl;
-    cout << endl;
     
 }
 
-void printReportFooter() {
-    
-    cout << "====================================================================" << endl;
-    cout << endl;
-    cout << endl;
-    cout << endl;
-    cout << endl;
-    
-}
 
 int main(int argc, char* argv[]) {
 
@@ -271,11 +268,10 @@ int main(int argc, char* argv[]) {
     
     for (iter = replacementAlgorithms.begin(); iter != replacementAlgorithms.end(); ++iter) {
         
-        printReportHeader((*iter)->replacerID);
+        printer::printReportHeader((*iter)->replacerID);
         runSimulation(*iter);
         // clearGlobals();
-        printReportFooter();
-        
+        printer::printReportFooter();
     }
     
 	return 0;

@@ -3,9 +3,9 @@
 
 #include <list>
 
-#include "PageList.h"
+#include "FreeList.h"
 #include "PageReplacer.h"
-#include "page.h"
+#include "Page.h"
 
 using namespace std;
 
@@ -23,6 +23,7 @@ public:
     int serviceDuration;
     int arrivalTime;
     int startTime;          // default to -1 to indicate hasn't started yet
+    
     
     list<Page*> pages;
     

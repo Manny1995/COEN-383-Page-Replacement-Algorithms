@@ -4,8 +4,8 @@
 
 #include <list>
 
-#include "page.h"
-#include "PageList.h"
+#include "Page.h"
+#include "FreeList.h"
 
 // gets called by the process class
 class PageReplacer {

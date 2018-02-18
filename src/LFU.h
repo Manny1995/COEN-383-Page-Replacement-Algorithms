@@ -2,7 +2,7 @@
 #define LFU_H
 
 #include "PageReplacer.h"
-#include "PageList.h"
+#include "FreeList.h"
 
 class LFU : public PageReplacer {
     
