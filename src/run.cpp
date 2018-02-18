@@ -146,7 +146,7 @@ vector<Process*> updateRemainingProcesses(vector<Process*> totalProcesses, vecto
 }
 
 
-void referencePages(vector<Process*> runningProcesses, PageReplacer* replacer) {
+void referencePages(vector<Process*> runningProcesses, PageReplacer* replacer, FreeList *freeList) {
     
     vector<Process*>::iterator iter;
     Process* currentProcess;
@@ -156,7 +156,9 @@ void referencePages(vector<Process*> runningProcesses, PageReplacer* replacer) {
         
         currentProcess = *iter;
         
-        hit = currentProcess->referencePage(replacer);
+        int nextPage = currentProcess->getNextPageIndex();
+        Page *newPage = freeList->getPageWithId(nextPage);
+        hit = currentProcess->referencePage(replacer, newPage);
         
         if (hit) {
             totalHits++;
@@ -166,12 +168,36 @@ void referencePages(vector<Process*> runningProcesses, PageReplacer* replacer) {
     }
 }
 
+void checkFreeList(FreeList *freeList) {
+    Page *bla = freeList->head;
+    int i  = 0;
+    while (bla != NULL) {
+        cerr << bla->pageID << endl;
+        i++;
+        bla=bla->next;
+    }
+    cerr << "Done with " << i << "iterations" << endl;
+}
+
+void checkProcessList(vector<Process *> processList) {
+    int i = 0;
+    for (auto p : processList) {
+        cerr << p->pid << endl;
+        i++;
+    }
+    cerr << "Done with " << i << " iterations" << endl;
+}
+
 void runSimulation(PageReplacer *replacer) {
     
     // PageList *freeList = generator::generateFreeList();
     FreeList* freeList = new FreeList();
-    
     vector<Process *> processList = generator::generateProcessList();
+
+    checkFreeList(freeList);
+    checkProcessList(processList);
+
+    
     
     vector<Process *> runningProcesses;
     
@@ -202,7 +228,8 @@ void runSimulation(PageReplacer *replacer) {
         // new page in it's address space
         if ((milliseconds % 100 == 0) && (milliseconds != 0)) {
             // replacer needs to be passed so that the process knows which page to evict
-            referencePages(runningProcesses, replacer);
+            
+            referencePages(runningProcesses, replacer, freeList);
         }
         
         // print stuff
@@ -219,6 +246,8 @@ void getNextPage(Process *p) {
 
 
 int main(int argc, char* argv[]) {
+    
+    srand(time(NULL));
 
 //    if (argc != 2) {
 //        cout << "Please enter an argument:" << endl;

@@ -30,7 +30,7 @@ void printer::printMemoryMap(FreeList *fl) {
     while (cur != NULL) {
         
         if (cur->processID > -1) {
-            cout << cur->processID;
+            cout << "[" << cur->processID << "]";
         }
         else {
             cout << ".";

@@ -17,7 +17,9 @@ Process::Process(string pName, int pNum, int pPageSize, int jArrivalTime, int jS
 int Process::getNextPageIndex() {
     int choice = rand() % 10;
     int newPage = -1;
-    if (choice <=6) {
+    
+    // change this to 6 before debugging
+    if (choice <=3) {
         int neighborArray[] = {-1, 0, 1};
         int neighborChoice = rand() % 3;
         newPage = this->currentPage+=neighborArray[neighborChoice];
@@ -29,19 +31,18 @@ int Process::getNextPageIndex() {
         }
     }
     else {
-        newPage = newPage % 100;
+        newPage = rand() % 100;
     }
     return newPage;
 }
 
-bool Process::referencePage(PageReplacer* replacer) {
+bool Process::referencePage(PageReplacer* replacer, Page *newPage) {
     
-    this->currentPage = this->getNextPageIndex();
+    this->currentPage = newPage->pageID;
     
     for (auto page : this->pages) {
         if (page->pageID == this->currentPage) {
             page->refCount++;
-            
             // todo, add a time
             return true;
         }
@@ -49,11 +50,12 @@ bool Process::referencePage(PageReplacer* replacer) {
     
     if (pages.size() == size) {
         replacer->evictPage(pages);
-        return false;
-    } else {
-        return true;
     }
     
+    newPage->refCount = 1;
+    newPage->processID = this->pnum;
+    this->pages.push_back(newPage);
+    return false;
 }
 
 void Process::freePages() {

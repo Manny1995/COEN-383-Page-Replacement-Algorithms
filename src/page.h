@@ -30,7 +30,7 @@ public:
     int timesReferenced;            // count of times referenced
     
     Page();
-    Page(string identifier);
+    Page(int i);
     
     /*
     Page() {

@@ -14,7 +14,8 @@ FreeList::FreeList() {
     
     for (int i = 0 ; i < FREE_LIST_SIZE ; ++i) {
         
-        Page* newPage = new Page();
+        Page* newPage = new Page(i);
+
         
         if (head == NULL) {
             head = newPage;
@@ -66,6 +67,19 @@ int FreeList::numberOfFreePages() {
     
     return numberOfFreePages;
     
+}
+
+Page* FreeList::getPageWithId(int id) {
+    Page *cur = this->head;
+    while (cur != NULL) {
+        if (cur->pageID == id) {
+            return cur;
+        }
+        
+        cur=cur->next;
+    }
+    
+    return NULL;
 }
 
 

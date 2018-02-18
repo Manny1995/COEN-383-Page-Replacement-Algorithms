@@ -31,7 +31,7 @@ public:
     Process(string pName, int pNum, int pPageSize, int jArrivalTime, int jServiceDuration);
     
     int getNextPageIndex();
-    bool referencePage(PageReplacer* replacer);
+    bool referencePage(PageReplacer* replacer, Page *newPage);
     void freePages();
     
 };

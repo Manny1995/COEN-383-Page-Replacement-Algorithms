@@ -13,6 +13,16 @@ Page::Page() {
     this->next = NULL;
 }
 
+Page::Page(int i) {
+    Page();
+    this->pageID = i;
+    
+    stringstream ss;
+    ss << "PG" << i;
+    
+    this->identifier = ss.str();
+}
+
 void Page::assignProcessOwner(Process* newOwner, int newID) {
     this->pageID = newID;
     this->refCount++;
