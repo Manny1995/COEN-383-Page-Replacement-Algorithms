@@ -30,10 +30,10 @@ void printer::printMemoryMap(FreeList *fl) {
     while (cur != NULL) {
         
         if (cur->processID > -1) {
-            cout << cur->processID << endl;
+            cout << cur->processID;
         }
         else {
-            cout << "." << endl;
+            cout << ".";
         }
         
         cur = cur->next;
@@ -55,6 +55,18 @@ void printer::printProcessEnded(int timestamp, Process *p, FreeList *fl) {
     cout << "Process name is " << p->pid << ", its size in pages is " << p->size << " and service duration is " << p->serviceDuration << endl;
     printMemoryMap(fl);
     
+}
+
+void printer::printFinishedProcesses(int timestamp, vector<Process *> finishedProcesses, FreeList *fl) {
+    for (auto p : finishedProcesses) {
+        printProcessEnded(timestamp, p, fl);
+    }
+}
+
+void printer::printStartedProcesses(int timestamp, vector<Process *>startedProcesses, FreeList *fl) {
+    for (auto p : startedProcesses) {
+        printProcessStarted(timestamp, p, fl);
+    }
 }
 
 

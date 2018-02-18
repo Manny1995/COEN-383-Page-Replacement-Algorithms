@@ -36,7 +36,7 @@ namespace generator {
         // int arrivalTime = rand() % 60;
         int arrivalTime = rand() % 60000;    // units in ms
         
-        int serviceDuration = rand() % 5;
+        int serviceDuration = ((rand() % 5) + 1) * 1000;
         
         string pName = getProcessName(pNum);
         
@@ -44,7 +44,7 @@ namespace generator {
 	}
 
     bool processComp(Process *p, Process *q) {
-        if (p == NULL && q == NULL) {
+        if (p == NULL || q == NULL) {
             cerr << "SORTING NULL PROCESS THIS SHOULD NOT BE HAPPENING" << endl;
             return false;
         }

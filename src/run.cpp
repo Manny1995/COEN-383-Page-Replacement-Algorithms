@@ -53,33 +53,24 @@ void processFinished(PageList *freeList, Process *terminatedProcess) {
 int totalMisses = 0;
 int totalHits = 0;
 
-void print
-
-void checkFinishedProcesses(vector<Process*> &runningProcesses, int currentTime) {
+// modifies the list for current processes
+vector<Process *> removeFinishedProcesses(vector<Process*> &runningProcesses, int currentTime) {
+    
+    vector<Process *>finishedProcesses;
     
     vector<Process*>::iterator iter;
     Process* currentProcess;
     int startTime, duration, calculatedEndTime;
     
-    for (iter = runningProcesses.begin(); iter != runningProcesses.end(); ++iter) {
-        
-        currentProcess = *iter;
-        
-        startTime = currentProcess->startTime;
-        duration = currentProcess->serviceDuration;
-        calculatedEndTime = startTime + duration;
-        
-        if (calculatedEndTime <= currentTime) {
-            
-            // process should finish
-            currentProcess->freePages();
-            
-            // generateProcessClosingReport();
-            runningProcesses.erase(iter);
+    for (int i = 0; i < runningProcesses.size(); i++) {
+        if (runningProcesses[i]->arrivalTime+(runningProcesses[i]->serviceDuration) >= currentTime) {
+            runningProcesses[i]->freePages();
+            finishedProcesses.push_back(runningProcesses[i]);
+            runningProcesses.erase(runningProcesses.begin()+i);
         }
-        
     }
-    
+ 
+    return finishedProcesses;
 }
 
 // given a time, get all processes that have arrived by that point
@@ -134,9 +125,7 @@ vector<Process*> startReadyProcesses(vector<Process*> readyProcesses, FreeList* 
         runningProcesses.push_back(currentProcess);
         
     }
-    
     return runningProcesses;
-    
 }
 
 // remove processes that are already running from the total processes queued up
@@ -144,7 +133,6 @@ vector<Process*> updateRemainingProcesses(vector<Process*> totalProcesses, vecto
     
     vector<Process*>::iterator iter;
     vector<Process*>::iterator foundPosition;
-    Process* currentProcess = NULL;
     
     for (iter = runningProcesses.begin(); iter != runningProcesses.end(); ++iter) {
         
@@ -167,6 +155,7 @@ void referencePages(vector<Process*> runningProcesses, PageReplacer* replacer) {
     for (iter = runningProcesses.begin(); iter != runningProcesses.end(); ++iter) {
         
         currentProcess = *iter;
+        
         hit = currentProcess->referencePage(replacer);
         
         if (hit) {
@@ -188,28 +177,32 @@ void runSimulation(PageReplacer *replacer) {
     
     // loop to run for one minute, measured in milliseconds
     for (int milliseconds = 0 ; milliseconds < 60000 ; ++milliseconds) {
-        
         if (!runningProcesses.empty()) {
-            
             // processes are running right now
             // need to check their service duration
-            checkFinishedProcesses(runningProcesses, milliseconds);
-            
+            vector<Process*> finishedProcesses = removeFinishedProcesses(runningProcesses, milliseconds);
+            printer::printFinishedProcesses(milliseconds, finishedProcesses, freeList);
         }
         
+        // Get new processes and start them
         vector<Process*> readyProcesses = getReadyProcesses(milliseconds, processList);
+        vector<Process*> initializedProcesses = startReadyProcesses(readyProcesses, freeList, milliseconds);
+        printer::printStartedProcesses(milliseconds, runningProcesses, freeList);
         
-        vector<Process*> runningProcesses = startReadyProcesses(readyProcesses, freeList, milliseconds);
+        // Add the new running processes to the running process list
+        for (auto p : initializedProcesses) {
+            runningProcesses.push_back(p);
+            cout << "Added a running process" << endl;
+        }
         
+        // deletes the processes from the process list
         processList = updateRemainingProcesses(processList, runningProcesses);
         
         // if 100 milliseconds have passed each process should reference a
         // new page in it's address space
         if ((milliseconds % 100 == 0) && (milliseconds != 0)) {
-            
             // replacer needs to be passed so that the process knows which page to evict
             referencePages(runningProcesses, replacer);
-            
         }
         
         // print stuff
@@ -227,13 +220,15 @@ void getNextPage(Process *p) {
 
 int main(int argc, char* argv[]) {
 
-	if (argc != 2) {
-		cout << "Please enter an argument:" << endl;
-		help();
-		return -1;
-	}
-
-	string choice = string(argv[1]);
+//    if (argc != 2) {
+//        cout << "Please enter an argument:" << endl;
+//        help();
+//        return -1;
+//    }
+//
+//    string choice = string(argv[1]);
+    
+    string choice = "fifo";
     
     list<PageReplacer*> replacementAlgorithms;
 

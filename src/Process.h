@@ -24,11 +24,13 @@ public:
     int arrivalTime;
     int startTime;          // default to -1 to indicate hasn't started yet
     
+    int currentPage;
     
     list<Page*> pages;
     
     Process(string pName, int pNum, int pPageSize, int jArrivalTime, int jServiceDuration);
     
+    int getNextPageIndex();
     bool referencePage(PageReplacer* replacer);
     void freePages();
     

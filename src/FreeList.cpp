@@ -26,6 +26,8 @@ FreeList::FreeList() {
         
     }
     
+    tail->next = NULL;
+    
 }
 
 
