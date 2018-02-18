@@ -7,9 +7,9 @@
 
 class FIFO : public PageReplacer {
 
-    public:
-        Page *evictPage(PageList *page);
-        FIFO();
+public:
+    Page *evictPage(list<Page*> &pageList);
+    FIFO();
     
 };
 

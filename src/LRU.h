@@ -6,8 +6,11 @@
 #include "PageList.h"
 
 class LRU : public PageReplacer {
-    public:
-        Page *evictPage(PageList *page);
+    
+public:
+    Page *evictPage(list<Page*> &pageList);
+    LRU();
+
 };
 
 

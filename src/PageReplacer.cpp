@@ -5,10 +5,10 @@
 #include "PageReplacer.h"
 
 PageReplacer::PageReplacer() {
-    
+    replacerID = "No ID";
 }
-Page *PageReplacer::evictPage(PageList *) {
- 
+
+Page *PageReplacer::evictPage(list<Page*> pageList) {
     return NULL;
 }
 

@@ -4,12 +4,15 @@
 #include "FIFO.h"
 
 FIFO::FIFO() {
-    
+    replacerID = "FIFO";
 }
 
-Page *FIFO::evictPage(PageList *pList) {
-    Page *head = pList->deleteHead();
-    return head;
+Page* FIFO::evictPage(list<Page*> &pageList) {
+    
+    Page* firstPage = *(pageList.begin());
+    pageList.pop_front();
+    return firstPage;
+    
 }
 
 

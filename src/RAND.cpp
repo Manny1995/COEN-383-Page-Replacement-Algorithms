@@ -3,13 +3,24 @@
 
 #include "RAND.h"
 
-Page *RAND::evictPage(PageList *pList) {
-    
-    
-
-    return NULL;
+RAND::RAND() {
+    replacerID = "RAND";
 }
 
+Page* RAND::evictPage(list<Page*> &pageList) {
+    
+    
+    int displacement = rand() % pageList.size();
+    list<Page*>::iterator iter = pageList.begin();
+    
+    advance(iter,displacement);
+    Page* randPage = *iter;
+    
+    // check if usage is correct
+    pageList.erase(iter);
 
+    return randPage;
+    
+}
 
 #endif

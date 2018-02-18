@@ -5,9 +5,11 @@
 #include "PageList.h"
 
 class MFU : public PageReplacer {
-    public:
-        Page *evictPage(PageList *page);
+    
+public:
+    Page *evictPage(list<Page*> &pageList);
+    MFU();
+    
 };
-
 
 #endif

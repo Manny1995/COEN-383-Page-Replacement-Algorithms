@@ -5,8 +5,11 @@
 #include "PageList.h"
 
 class RAND : public PageReplacer {
-    public:
-        Page *evictPage(PageList *page);
+    
+public:
+    Page *evictPage(list<Page*> &pageList);
+    RAND();
+    
 };
 
 

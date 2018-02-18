@@ -19,6 +19,8 @@
 
 #include "generator.h"
 
+#define STARTING_PAGE_ID 0
+
 using namespace std;
 
 
@@ -32,28 +34,160 @@ void help() {
 }
 
 // add the terminated process' free pages back to the free list
+/*
 void processFinished(PageList *freeList, Process *terminatedProcess) {
     PageList *freePages = terminatedProcess->pageList;
     freeList->appendPageList(freePages);
     delete terminatedProcess;
 }
+ */
+int totalMisses = 0;
+int totalHits = 0;
 
-
-void startSimulation(PageReplacer *replacer) {
+// given a time, get all processes that have arrived by that point
+vector<Process*> getReadyProcesses(int currentTime, vector<Process*> processList) {
     
-    PageList *freeList = generator::generateFreeList();
+    vector<Process*> readyProcesses;
+    vector<Process*>::iterator iter;
+    Process* currentProcess;
+    
+    for (iter = processList.begin(); iter != processList.end(); ++iter) {
+        
+        currentProcess = *iter;
+        
+        if (currentProcess->arrivalTime <= currentTime) {
+            readyProcesses.push_back(currentProcess);
+        }
+        
+    }
+    
+    return readyProcesses;
+    
+}
+
+// given some number of processes that should be started, give all processes a page
+// from the free list given that for each process there are at least four free pages
+// in the free list
+vector<Process*> startReadyProcesses(vector<Process*> readyProcesses, FreeList* freeList) {
+    
+    vector<Process*> runningProcesses;
+    vector<Process*>::iterator iter;
+    Process* currentProcess;
+    
+    for (iter = readyProcesses.begin(); iter != readyProcesses.end(); ++iter) {
+        
+        currentProcess = *iter;
+        
+        if (!freeList->hasEnoughFreePages()) {
+            break;
+        }
+        
+        Page* freePage = freeList->getFreePage();
+        freePage->assignProcessOwner(currentProcess, STARTING_PAGE_ID);
+        totalMisses++;
+        
+        currentProcess->pages.push_back(freePage);
+        
+        runningProcesses.push_back(currentProcess);
+        
+    }
+    
+    return runningProcesses;
+    
+}
+
+// remove processes that are already running from the total processes queued up
+vector<Process*> updateRemainingProcesses(vector<Process*> totalProcesses, vector<Process*> runningProcesses) {
+    
+    vector<Process*>::iterator iter;
+    vector<Process*>::iterator foundPosition;
+    Process* currentProcess;
+    
+    for (iter = runningProcesses.begin(); iter != runningProcesses.end(); ++iter) {
+        
+        foundPosition = find(totalProcesses.begin(), totalProcesses.end(), *iter);
+        totalProcesses.erase(foundPosition);
+        
+    }
+    
+    return totalProcesses;
+    
+}
+
+
+void referencePages(vector<Process*> runningProcesses, PageReplacer* replacer) {
+    
+    vector<Process*>::iterator iter;
+    Process* currentProcess;
+    bool hit;
+    
+    for (iter = runningProcesses.begin(); iter != runningProcesses.end(); ++iter) {
+        
+        currentProcess = *iter;
+        hit = currentProcess->referencePage(replacer);
+        
+        if (hit) {
+            totalHits++;
+        } else {
+            totalMisses++;
+        }
+        
+    }
+    
+}
+
+void runSimulation(PageReplacer *replacer) {
+    
+    // PageList *freeList = generator::generateFreeList();
+    FreeList* freeList = generator::generateFreeList();
     vector<Process *> processList = generator::generateProcessList();
     
+    vector<Process *> runningProcesses;
     
-    vector<Process *>runningProcesses;
-    
-    // seconds
-    for (int i = 0; i < 60; i++) {
-        // milliseconds
-        for (int j = 0; j < 10; j++) {
+    // loop to run for one minute, measured in milliseconds
+    for (int milliseconds = 0 ; milliseconds < 60000 ; ++milliseconds) {
+        
+        if (!runningProcesses.empty()) {
+            // processes are running right now
+            // need to check their service duration
+        }
+        
+        vector<Process*> readyProcesses = getReadyProcesses(milliseconds, processList);
+        
+        vector<Process*> runningProcesses = startReadyProcesses(readyProcesses, freeList);
+        
+        processList = updateRemainingProcesses(processList, runningProcesses);
+        
+        // if 100 milliseconds have passed each process should reference a
+        // new page in it's address space
+        if ((milliseconds % 100 == 0) && (milliseconds != 0)) {
+            
+            // replacer needs to be passed so that the process knows which page to evict
+            referencePages(runningProcesses, replacer);
             
         }
+        
+        // print stuff
+        
     }
+    
+}
+
+void printReportHeader(string algorithm) {
+    
+    cout << "====================================================================" << endl;
+    cout << algorithm << endl;
+    cout << endl;
+    
+}
+
+void printReportFooter() {
+    
+    cout << "====================================================================" << endl;
+    cout << endl;
+    cout << endl;
+    cout << endl;
+    cout << endl;
     
 }
 
@@ -66,38 +200,48 @@ int main(int argc, char* argv[]) {
 	}
 
 	string choice = string(argv[1]);
-
-
-
+    
+    list<PageReplacer*> replacementAlgorithms;
 
 	if (choice == "all") {
-
+        replacementAlgorithms.push_back(new FIFO());
+        replacementAlgorithms.push_back(new LRU());
+        replacementAlgorithms.push_back(new LFU());
+        replacementAlgorithms.push_back(new MFU());
+        replacementAlgorithms.push_back(new RAND());
 	}
 	else if (choice == "fifo") {
-
+        replacementAlgorithms.push_back(new FIFO());
 	}
 	else if (choice == "lru") {
-
+        replacementAlgorithms.push_back(new LRU());
 	}
 	else if (choice == "lfu") {
-
+        replacementAlgorithms.push_back(new LFU());
 	}
 	else if (choice == "mfu") {
-
+        replacementAlgorithms.push_back(new MFU());
 	}
 	else if (choice == "rand") {
-
+        replacementAlgorithms.push_back(new RAND());
 	}
 	else {
 		cout << "Invalid argument, please try again!" << endl;
 		help();
 	}
-
     
-    PageReplacer *replacer = new FIFO();
-    startSimulation(replacer);
+    list<PageReplacer*>::iterator iter;
     
-	return 1;
+    for (iter = replacementAlgorithms.begin(); iter != replacementAlgorithms.end(); ++iter) {
+        
+        printReportHeader((*iter)->replacerID);
+        runSimulation(*iter);
+        // clearGlobals();
+        printReportFooter();
+        
+    }
+    
+	return 0;
 
 }
 
