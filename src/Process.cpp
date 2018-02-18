@@ -23,5 +23,18 @@ bool Process::referencePage(PageReplacer* replacer) {
     
 }
 
+void Process::freePages() {
+    
+    list<Page*>::iterator iter;
+    Page* currentPage;
+    
+    for (iter = pages.begin(); iter != pages.end(); ++iter) {
+        
+        currentPage = *iter;
+        currentPage->removeProcessOwner();
+        
+    }
+    
+}
 
 #endif

@@ -29,6 +29,7 @@ public:
     Process(string pName, int pNum, int pPageSize, int jArrivalTime, int jServiceDuration);
     
     bool referencePage(PageReplacer* replacer);
+    void freePages();
     
 };
 

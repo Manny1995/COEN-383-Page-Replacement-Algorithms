@@ -44,6 +44,35 @@ void processFinished(PageList *freeList, Process *terminatedProcess) {
 int totalMisses = 0;
 int totalHits = 0;
 
+void print
+
+void checkFinishedProcesses(vector<Process*> &runningProcesses, int currentTime) {
+    
+    vector<Process*>::iterator iter;
+    Process* currentProcess;
+    int startTime, duration, calculatedEndTime;
+    
+    for (iter = runningProcesses.begin(); iter != runningProcesses.end(); ++iter) {
+        
+        currentProcess = *iter;
+        
+        startTime = currentProcess->startTime;
+        duration = currentProcess->serviceDuration;
+        calculatedEndTime = startTime + duration;
+        
+        if (calculatedEndTime <= currentTime) {
+            
+            // process should finish
+            currentProcess->freePages();
+            
+            // generateProcessClosingReport();
+            runningProcesses.erase(iter);
+        }
+        
+    }
+    
+}
+
 // given a time, get all processes that have arrived by that point
 vector<Process*> getReadyProcesses(int currentTime, vector<Process*> processList) {
     
@@ -68,7 +97,9 @@ vector<Process*> getReadyProcesses(int currentTime, vector<Process*> processList
 // given some number of processes that should be started, give all processes a page
 // from the free list given that for each process there are at least four free pages
 // in the free list
-vector<Process*> startReadyProcesses(vector<Process*> readyProcesses, FreeList* freeList) {
+vector<Process*> startReadyProcesses(vector<Process*> readyProcesses, FreeList* freeList, int currentTime) {
+    
+    // start ready processes
     
     vector<Process*> runningProcesses;
     vector<Process*>::iterator iter;
@@ -87,6 +118,9 @@ vector<Process*> startReadyProcesses(vector<Process*> readyProcesses, FreeList* 
         totalMisses++;
         
         currentProcess->pages.push_back(freePage);
+        currentProcess->startTime = currentTime;
+        
+        // print process report
         
         runningProcesses.push_back(currentProcess);
         
@@ -148,13 +182,16 @@ void runSimulation(PageReplacer *replacer) {
     for (int milliseconds = 0 ; milliseconds < 60000 ; ++milliseconds) {
         
         if (!runningProcesses.empty()) {
+            
             // processes are running right now
             // need to check their service duration
+            checkFinishedProcesses(runningProcesses, milliseconds);
+            
         }
         
         vector<Process*> readyProcesses = getReadyProcesses(milliseconds, processList);
         
-        vector<Process*> runningProcesses = startReadyProcesses(readyProcesses, freeList);
+        vector<Process*> runningProcesses = startReadyProcesses(readyProcesses, freeList, milliseconds);
         
         processList = updateRemainingProcesses(processList, runningProcesses);
         
