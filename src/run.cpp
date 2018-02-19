@@ -27,26 +27,31 @@
 
 #define STARTING_PAGE_ID 0
 
+extern bool printAverage;
+extern bool printProcesses;
+extern bool printReferences;
+
+bool printAverage;
+bool printProcesses;
+bool printReferences;
+
 using namespace std;
 
-
 void help() {
-		cout << "all 	- run all 6 algorithms" << endl;
-		cout << "fifo 	- first come first serve" << endl;
-		cout << "lru 	- shortest job first" << endl;
-		cout << "lfu 	- shortest time remaining" << endl;
-		cout << "mfu	- round robin" << endl;
-		cout << "rand	- highest priority first non-preemptive" << endl;
+    cout << "Algorithms" << endl;
+    cout << "all 	- run all 6 algorithms" << endl;
+    cout << "fifo 	- first come first serve" << endl;
+    cout << "lru 	- shortest job first" << endl;
+    cout << "lfu 	- shortest time remaining" << endl;
+    cout << "mfu	- round robin" << endl;
+    cout << "rand	- highest priority first non-preemptive" << endl << endl;
+    cout << "Flags" << endl;
+    cout << "-all   - print all stats" << endl;
+    cout << "-avg   - print only avg hits/misses" << endl;
+    cout << "-proc  - print only processes marks (starting/ending processes)" << endl;
+    cout << "-ref   - print only reference marks (hit/miss encountered)" << endl;
 }
 
-// add the terminated process' free pages back to the free list
-/*
-void processFinished(PageList *freeList, Process *terminatedProcess) {
-    PageList *freePages = terminatedProcess->pageList;
-    freeList->appendPageList(freePages);
-    delete terminatedProcess;
-}
- */
 int totalMisses = 0;
 int totalHits = 0;
 int totalSwaps = 0;
@@ -241,11 +246,6 @@ void runSimulation(PageReplacer *replacer) {
         
         // we pass in initialized processes because we need to just show the ones which started
         printer::printStartedProcesses(milliseconds, initializedProcesses, freeList);
-
-        
-        // I do not think we need this
-        // deletes the processes from the process list
-        // processList = updateRemainingProcesses(processList, runningProcesses);
         
         // if 100 milliseconds have passed each process should reference a
         // new page in it's address space
@@ -268,25 +268,17 @@ int main(int argc, char* argv[]) {
     
     srand(time(NULL));
 
-    if (argc != 2) {
-        cout << "Please enter an argument:" << endl;
+    if (argc < 3) {
+        cout << "Please enter an argument and flag:" << endl;
         help();
         return -1;
     }
 
     string choice = string(argv[1]);
-    
+    string flag = string(argv[2]);
     
     list<PageReplacer*> replacementAlgorithms;
     
-//    if (choice == "all") {
-//        replacementAlgorithms.push_back(new PageReplacer(FIFO_IDENTIFIER));
-//        replacementAlgorithms.push_back(new PageReplacer(LRU_IDENTIFIER));
-//        replacementAlgorithms.push_back(new PageReplacer(LFU_IDENTIFIER));
-//        replacementAlgorithms.push_back(new PageReplacer(MFU_IDENTIFIER));
-//        replacementAlgorithms.push_back(new PageReplacer(RAND_IDENTIFIER));
-//    }
-//	else
     if (choice == "fifo") {
         replacementAlgorithms.push_back(new PageReplacer(FIFO_IDENTIFIER));
 	}
@@ -303,19 +295,40 @@ int main(int argc, char* argv[]) {
         replacementAlgorithms.push_back(new PageReplacer(RAND_IDENTIFIER));
 	}
 	else {
-		cout << "Invalid argument, please try again!" << endl;
+		cout << "Invalid algorithm, please try again!" << endl;
 		help();
 	}
     
+    if (flag == "-all") {
+        printAverage = true;
+        printProcesses = true;
+        printReferences = true;
+    } else if (flag == "-avg") {
+        printAverage = true;
+        printProcesses = false;
+        printReferences = false;
+    } else if (flag == "-proc") {
+        printAverage = false;
+        printProcesses = true;
+        printReferences = false;
+    } else if (flag == "-ref") {
+        printAverage = false;
+        printProcesses = false;
+        printReferences = true;
+    } else {
+        cout << "Invalid flag, please try again!" << endl;
+        help();
+    }
+    
     list<PageReplacer*>::iterator iter;
+    cout << endl;
     
     for (iter = replacementAlgorithms.begin(); iter != replacementAlgorithms.end(); ++iter) {
         
         for (int i = 0; i < NUM_EXPERIMENTS; i++) {
-            cout << "Starting Sim " << i << endl;
+            cout << "\t\t\t\t\t\tSIMULATION " << i << endl;
             printer::printReportHeader((*iter)->replacerID);
             runSimulation(*iter);
-            // clearGlobals();
             printer::printReportFooter();
         }
         
