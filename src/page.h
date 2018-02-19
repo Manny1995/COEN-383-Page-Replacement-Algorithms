@@ -5,9 +5,10 @@
 
 #include "Process.h"
 
+class Process;
+
 using namespace std;
 
-class Process;
 
 class Page {
     

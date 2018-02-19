@@ -11,11 +11,6 @@
 
 // Include page replacement Algorithms
 #include "PageReplacer.h"
-#include "FIFO.h"
-#include "LRU.h"
-#include "LFU.h"
-#include "MFU.h"
-#include "RAND.h"
 
 // Include generation
 #include "generator.h"
@@ -276,38 +271,32 @@ int main(int argc, char* argv[]) {
 //
 //    string choice = string(argv[1]);
     
-    string choice = "lfu";
+    string choice = "rand";
     
-    
-    static FIFO fifo = FIFO();
-    static LRU lru = LRU();
-    static LFU lfu = LFU();
-    static MFU mfu = MFU();
-    static RAND rand = RAND();
     
     list<PageReplacer*> replacementAlgorithms;
     
 	if (choice == "all") {
-        replacementAlgorithms.push_back(new FIFO());
-        replacementAlgorithms.push_back(new LRU());
-        replacementAlgorithms.push_back(new LFU());
-        replacementAlgorithms.push_back(new MFU());
-        replacementAlgorithms.push_back(new RAND());
+        replacementAlgorithms.push_back(new PageReplacer(FIFO_IDENTIFIER));
+        replacementAlgorithms.push_back(new PageReplacer(LRU_IDENTIFIER));
+        replacementAlgorithms.push_back(new PageReplacer(LFU_IDENTIFIER));
+        replacementAlgorithms.push_back(new PageReplacer(MFU_IDENTIFIER));
+        replacementAlgorithms.push_back(new PageReplacer(RAND_IDENTIFIER));
 	}
 	else if (choice == "fifo") {
-        replacementAlgorithms.push_back(&fifo);
+        replacementAlgorithms.push_back(new PageReplacer(FIFO_IDENTIFIER));
 	}
 	else if (choice == "lru") {
-        replacementAlgorithms.push_back(new LRU());
+        replacementAlgorithms.push_back(new PageReplacer(LRU_IDENTIFIER));
 	}
 	else if (choice == "lfu") {
-        replacementAlgorithms.push_back(new LFU());
+        replacementAlgorithms.push_back(new PageReplacer(LFU_IDENTIFIER));
 	}
 	else if (choice == "mfu") {
-        replacementAlgorithms.push_back(new MFU());
+        replacementAlgorithms.push_back(new PageReplacer(MFU_IDENTIFIER));
 	}
 	else if (choice == "rand") {
-        replacementAlgorithms.push_back(new RAND());
+        replacementAlgorithms.push_back(new PageReplacer(RAND_IDENTIFIER));
 	}
 	else {
 		cout << "Invalid argument, please try again!" << endl;
