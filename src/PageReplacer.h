@@ -15,10 +15,15 @@ public:
     
     // Takes in a page list and returns the evicted page
     // virtual Page* evictPage(PageList *pageList);
-    virtual Page* evictPage(list<Page*> pageList);
+    virtual Page* evictPage(list<Page*> pageList){
+        cout << "PageReplacer should not be called" << endl;
+        return NULL;
+    }
+    
     PageReplacer();
 
 };
+
 
 
 #endif

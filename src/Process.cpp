@@ -3,6 +3,8 @@
 
 #include "Process.h"
 
+#define LOCALITY_THRESHOLD 7
+
 Process::Process(string pName, int pNum, int pPageSize, int jArrivalTime, int jServiceDuration) {
     this->pid = pName;
     this->pnum = pNum;
@@ -19,9 +21,9 @@ int Process::getNextPageIndex() {
     int newPage = -1;
     
     // change this to 6 before debugging
-    if (choice <=3) {
+    if (choice <=7) {
         int neighborArray[] = {-1, 0, 1};
-        int neighborChoice = rand() % 3;
+        int neighborChoice = rand() % LOCALITY_THRESHOLD;
         newPage = this->currentPage+=neighborArray[neighborChoice];
         
         // TODO - Make sure that we take a page that is not referenced by another one
@@ -42,29 +44,27 @@ int Process::getNextPageIndex() {
     return newPage;
 }
 
-bool Process::referencePage(PageReplacer* replacer, Page *newPage) {
+bool Process::referencePage(PageReplacer* replacer, Page *newPage, int timestamp, Page* evictedPage) {
     
-    if (newPage == NULL) {
-        //cerr << "TRYING TO REFERENCE A NULL PAGE" << endl;
-        return false;
-        
-    }
+    evictedPage = NULL;
     
     this->currentPage = newPage->pageID;
     
     for (auto page : this->pages) {
         if (page->pageID == this->currentPage) {
-            page->refCount++;
+            page->timesReferenced++;
+            page->lastTimeReferenced = 0;
+            page->timesReferenced = timestamp;
             // todo, add a time
             return true;
         }
     }
     
     if (pages.size() == size) {
-        replacer->evictPage(pages);
+        evictedPage = replacer->evictPage(pages);
     }
     
-    newPage->refCount = 1;
+    newPage->timesReferenced = 1;
     newPage->processID = this->pnum;
     this->pages.push_back(newPage);
     return false;

@@ -15,11 +15,10 @@ public:
     
     string identifier;
     int pageID;
-    int refCount;
     int processID;
     Page *next;
     
-    void assignProcessOwner(Process* newOwner, int newID);
+    void assignProcessOwner(Process* newOwner, int newID, int timestamp);
     void removeProcessOwner();
     
     /* Algorithm Specific Info */

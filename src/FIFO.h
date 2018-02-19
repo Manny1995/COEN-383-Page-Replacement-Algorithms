@@ -8,9 +8,16 @@
 class FIFO : public PageReplacer {
 
 public:
-    Page *evictPage(list<Page*> &pageList);
     FIFO();
-    
+    virtual Page* evictPage(list<Page*> &pageList);
+
 };
+
+//class PageReplacerFactory {
+//
+//    Page *evictPage(string algo) {
+//
+//    }
+//};
 
 #endif

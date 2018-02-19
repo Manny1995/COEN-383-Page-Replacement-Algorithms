@@ -8,8 +8,5 @@ PageReplacer::PageReplacer() {
     replacerID = "No ID";
 }
 
-Page *PageReplacer::evictPage(list<Page*> pageList) {
-    return NULL;
-}
 
 #endif

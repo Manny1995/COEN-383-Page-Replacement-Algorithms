@@ -3,6 +3,7 @@
 #define PRINTER_CPP
 
 #include "printer.h"
+#include <sstream>
 
 void printer::printReportHeader(string algorithm) {
     
@@ -95,6 +96,23 @@ void printer::printProcessList(vector<Process *>processList) {
     }
     cout << "-------------------------------------------" << endl;
 
+}
+
+void printer::printHit(Process *currentProcess, int timestamp, Page *newPage) {
+    stringstream ss;
+    ss << timestamp << ":   " << currentProcess->pnum << " HIT Page[" << newPage->pageID << "]";
+    cout << ss.str() << endl;
+}
+
+void printer::printMiss(Process *currentProcess, int timestamp, Page *newPage, Page *evictedPage) {
+    stringstream ss;
+    ss << timestamp << ":   " << currentProcess->pnum << " MISS Page[" << newPage->pageID << "]";
+    
+    if (evictedPage != NULL) {
+        ss << " and evicted Page[" << evictedPage->pageID << "]";
+    }
+    
+    cout << ss.str() << endl;
 }
 
 

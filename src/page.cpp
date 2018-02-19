@@ -30,10 +30,15 @@ Page::Page(int i) {
     this->identifier = ss.str();
 }
 
-void Page::assignProcessOwner(Process* newOwner, int newID) {
+void Page::assignProcessOwner(Process* newOwner, int newID, int timeAssigned) {
+//    We should not have this!  PageID is always the same for a page (from 0 to 100)
 //    this->pageID = newID;
-    this->refCount++;
+    
+    // times referenced will be refreshed by the new tie
+    this->timesReferenced = 1;
     this->processID = newOwner->pnum;
+    
+    this->lastTimeReferenced = timeAssigned;
 }
 
 // only remove last time referenced, times reference, and processID

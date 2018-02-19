@@ -9,6 +9,7 @@ FIFO::FIFO() {
 
 Page* FIFO::evictPage(list<Page*> &pageList) {
     
+    cout << "FIFO BEING EVICTED" << endl;
     Page* firstPage = *(pageList.begin());
     pageList.pop_front();
     return firstPage;

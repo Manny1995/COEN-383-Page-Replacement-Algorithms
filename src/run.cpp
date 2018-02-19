@@ -126,7 +126,7 @@ vector<Process*> startReadyProcesses(vector<Process*> readyProcesses, FreeList* 
         }
         
         Page* freePage = freeList->getFreePage();
-        freePage->assignProcessOwner(currentProcess, STARTING_PAGE_ID);
+        freePage->assignProcessOwner(currentProcess, STARTING_PAGE_ID, currentTime);
         totalMisses++;
         
         currentProcess->pages.push_back(freePage);
@@ -162,7 +162,7 @@ vector<Process*> updateRemainingProcesses(vector<Process*> totalProcesses, vecto
 }
 
 
-void referencePages(vector<Process*> runningProcesses, PageReplacer* replacer, FreeList *freeList) {
+void referencePages(vector<Process*> runningProcesses, PageReplacer* replacer, FreeList *freeList, int timestamp) {
     
     vector<Process*>::iterator iter;
     Process* currentProcess;
@@ -176,11 +176,14 @@ void referencePages(vector<Process*> runningProcesses, PageReplacer* replacer, F
         int nextPage = currentProcess->getNextPageIndex();
         newPage = freeList->getPageWithId(nextPage);
         
-        hit = currentProcess->referencePage(replacer, newPage);
+        Page *evictedPage = NULL;
+        hit = currentProcess->referencePage(replacer, newPage, timestamp, evictedPage);
         
         if (hit) {
+            printer::printHit(currentProcess, timestamp, newPage);
             totalHits++;
         } else {
+            printer::printMiss(currentProcess, timestamp, newPage, evictedPage);
             totalMisses++;
         }
     }
@@ -231,7 +234,7 @@ void runSimulation(PageReplacer *replacer) {
         // initialization logic for the new processes with the freelist
         vector<Process*> initializedProcesses = startReadyProcesses(readyProcesses, freeList, milliseconds);
         
-        // Add the new running processes to the running process list
+        // Add the new initialized processes processes to the running process list
         for (int i = 0; i < initializedProcesses.size(); i++) {
             runningProcesses.push_back(initializedProcesses[i]);
         }
@@ -253,7 +256,7 @@ void runSimulation(PageReplacer *replacer) {
             Process *cur = runningProcesses[i];
             int time_diff = milliseconds - cur->startTime;
             if (time_diff % 100 == 0) {
-                referencePages(runningProcesses, replacer, freeList);
+                referencePages(runningProcesses, replacer, freeList, milliseconds);
             }
         }
         
@@ -273,10 +276,17 @@ int main(int argc, char* argv[]) {
 //
 //    string choice = string(argv[1]);
     
-    string choice = "fifo";
+    string choice = "lfu";
+    
+    
+    static FIFO fifo = FIFO();
+    static LRU lru = LRU();
+    static LFU lfu = LFU();
+    static MFU mfu = MFU();
+    static RAND rand = RAND();
     
     list<PageReplacer*> replacementAlgorithms;
-
+    
 	if (choice == "all") {
         replacementAlgorithms.push_back(new FIFO());
         replacementAlgorithms.push_back(new LRU());
@@ -285,7 +295,7 @@ int main(int argc, char* argv[]) {
         replacementAlgorithms.push_back(new RAND());
 	}
 	else if (choice == "fifo") {
-        replacementAlgorithms.push_back(new FIFO());
+        replacementAlgorithms.push_back(&fifo);
 	}
 	else if (choice == "lru") {
         replacementAlgorithms.push_back(new LRU());
