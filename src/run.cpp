@@ -60,21 +60,26 @@ vector<Process *> removeFinishedProcesses(vector<Process*> &runningProcesses, in
     
     vector<Process*>::iterator iter;
     Process* currentProcess;
-    int startTime, duration, calculatedEndTime;
+    int calculatedEndTime;
     
     for (int i = 0; i < runningProcesses.size(); i++) {
-        if (runningProcesses[i]->arrivalTime+(runningProcesses[i]->serviceDuration) >= currentTime) {
+        
+        calculatedEndTime = runningProcesses[i]->arrivalTime + runningProcesses[i]->serviceDuration;
+        
+        if (calculatedEndTime <= currentTime) {
             runningProcesses[i]->freePages();
             finishedProcesses.push_back(runningProcesses[i]);
             runningProcesses.erase(runningProcesses.begin()+i);
         }
+        
     }
  
     return finishedProcesses;
 }
 
 // given a time, get all processes that have arrived by that point
-vector<Process*> getReadyProcesses(int currentTime, vector<Process*> processList) {
+// IMPORTANT: removes processes that are ready from processList
+vector<Process*> getReadyProcesses(int currentTime, vector<Process*> &processList) {
     
     vector<Process*> readyProcesses;
     vector<Process*>::iterator iter;
@@ -86,6 +91,7 @@ vector<Process*> getReadyProcesses(int currentTime, vector<Process*> processList
         
         if (currentProcess->arrivalTime <= currentTime) {
             readyProcesses.push_back(currentProcess);
+            processList.erase(iter);
         }
         
     }
@@ -125,6 +131,7 @@ vector<Process*> startReadyProcesses(vector<Process*> readyProcesses, FreeList* 
         runningProcesses.push_back(currentProcess);
         
     }
+    
     return runningProcesses;
 }
 
@@ -137,7 +144,10 @@ vector<Process*> updateRemainingProcesses(vector<Process*> totalProcesses, vecto
     for (iter = runningProcesses.begin(); iter != runningProcesses.end(); ++iter) {
         
         foundPosition = find(totalProcesses.begin(), totalProcesses.end(), *iter);
-        totalProcesses.erase(foundPosition);
+        
+        if (foundPosition != totalProcesses.end()) {
+            totalProcesses.erase(foundPosition);
+        }
         
     }
     
@@ -172,37 +182,32 @@ void checkFreeList(FreeList *freeList) {
     Page *bla = freeList->head;
     int i  = 0;
     while (bla != NULL) {
-        cerr << bla->pageID << endl;
         i++;
         bla=bla->next;
     }
-    cerr << "Done with " << i << "iterations" << endl;
 }
 
 void checkProcessList(vector<Process *> processList) {
     int i = 0;
     for (auto p : processList) {
-        cerr << p->pid << endl;
+        cerr << "arrival time: " << p->arrivalTime << endl;
         i++;
     }
-    cerr << "Done with " << i << " iterations" << endl;
 }
 
 void runSimulation(PageReplacer *replacer) {
     
-    // PageList *freeList = generator::generateFreeList();
     FreeList* freeList = new FreeList();
     vector<Process *> processList = generator::generateProcessList();
 
     checkFreeList(freeList);
     checkProcessList(processList);
-
-    
     
     vector<Process *> runningProcesses;
     
     // loop to run for one minute, measured in milliseconds
     for (int milliseconds = 0 ; milliseconds < 60000 ; ++milliseconds) {
+        cout << "time: " << milliseconds << endl;
         if (!runningProcesses.empty()) {
             // processes are running right now
             // need to check their service duration
@@ -213,37 +218,66 @@ void runSimulation(PageReplacer *replacer) {
         // Get new processes and start them
         vector<Process*> readyProcesses = getReadyProcesses(milliseconds, processList);
         vector<Process*> initializedProcesses = startReadyProcesses(readyProcesses, freeList, milliseconds);
-        printer::printStartedProcesses(milliseconds, runningProcesses, freeList);
         
         // Add the new running processes to the running process list
+        
+        
         for (auto p : initializedProcesses) {
+            
             runningProcesses.push_back(p);
-            cout << "Added a running process" << endl;
         }
         
+        
+        /*
+        vector<Process*>::iterator iter;
+        for (iter = initializedProcesses.begin(); iter != initializedProcesses.end(); ++iter) {
+            
+            Process* currentProcess = *iter;
+            
+            if (find(runningProcesses.begin(), runningProcesses.end(), currentProcess) == runningProcesses.end()) {
+                runningProcesses.push_back(currentProcess);
+                // initializedProcesses.erase(iter);
+                // print single process getting added
+            }
+            
+        }
+        
+        if (!initializedProcesses.empty()) {
+            
+            vector<Process*>::iterator iter;
+            for (iter = initializedProcesses.begin(); iter != initializedProcesses.end(); ++iter) {
+                
+                Process* currentProcess = *iter;
+                
+                if (find(processList.begin(), processList.end(), currentProcess) == processList.end()) {
+                    processList.push_back(currentProcess);
+                }
+                
+            }
+            
+            initializedProcesses.clear();
+            
+        }
+         */
+        
+        printer::printStartedProcesses(milliseconds, runningProcesses, freeList);
+
+         
         // deletes the processes from the process list
         processList = updateRemainingProcesses(processList, runningProcesses);
         
         // if 100 milliseconds have passed each process should reference a
         // new page in it's address space
         if ((milliseconds % 100 == 0) && (milliseconds != 0)) {
-            // replacer needs to be passed so that the process knows which page to evict
             
+            // replacer needs to be passed so that the process knows which page to evict
             referencePages(runningProcesses, replacer, freeList);
+            
         }
-        
-        // print stuff
         
     }
     
 }
-
-
-void getNextPage(Process *p) {
-    
-    
-}
-
 
 int main(int argc, char* argv[]) {
     

@@ -1,2 +1,2 @@
 all:
-	g++ -o run *.cpp
+	g++ -g -o run *.cpp

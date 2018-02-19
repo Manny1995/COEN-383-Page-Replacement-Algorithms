@@ -14,8 +14,15 @@ Page::Page() {
 }
 
 Page::Page(int i) {
-    Page();
+    
+    // Page();
+    
+    this->identifier = "NO ID";
     this->pageID = i;
+    this->lastTimeReferenced = -1;
+    this->timesReferenced = 0;
+    this->processID = -1;
+    this->next = NULL;
     
     stringstream ss;
     ss << "PG" << i;

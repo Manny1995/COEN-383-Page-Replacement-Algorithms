@@ -44,7 +44,7 @@ void printer::printMemoryMap(FreeList *fl) {
 void printer::printProcessStarted(int timestamp, Process *p, FreeList *fl) {
     cout << "TIMESTAMP - " << timestamp << endl;
     cout << "PROCESS STARTED " << endl;
-    cout << "Process name is " << p->pid << ", its size in pages is " << p->size << " and service duration is " << p->serviceDuration << endl;
+    cout << "Process name is " << p->pid << ", its size in pages is " << p->size << " and service duration is " << p->serviceDuration << " ms." << endl;
     printMemoryMap(fl);
 }
 
@@ -52,7 +52,7 @@ void printer::printProcessStarted(int timestamp, Process *p, FreeList *fl) {
 void printer::printProcessEnded(int timestamp, Process *p, FreeList *fl) {
     cout << "TIMESTAMP - " << timestamp << endl;
     cout << "PROCESS COMPLETED " << endl;
-    cout << "Process name is " << p->pid << ", its size in pages is " << p->size << " and service duration is " << p->serviceDuration << endl;
+    cout << "Process name was " << p->pid << ", its size in pages was " << p->size << " and service duration was " << p->serviceDuration << endl;
     printMemoryMap(fl);
     
 }

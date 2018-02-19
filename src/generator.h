@@ -63,7 +63,7 @@ namespace generator {
         }
         
         sort(processList.begin(), processList.end(), processComp);
-        
+                
         return processList;
         
     }
