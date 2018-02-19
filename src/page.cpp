@@ -31,14 +31,13 @@ Page::Page(int i) {
 }
 
 void Page::assignProcessOwner(Process* newOwner, int newID) {
-    this->pageID = newID;
+//    this->pageID = newID;
     this->refCount++;
     this->processID = newOwner->pnum;
 }
 
+// only remove last time referenced, times reference, and processID
 void Page::removeProcessOwner() {
-    this->identifier = "NO ID";
-    this->pageID = -1;
     this->lastTimeReferenced = -1;
     this->timesReferenced = 0;
     this->processID = -1;

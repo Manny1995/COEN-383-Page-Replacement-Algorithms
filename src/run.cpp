@@ -68,6 +68,7 @@ vector<Process *> removeFinishedProcesses(vector<Process*> &runningProcesses, in
         
         if (calculatedEndTime <= currentTime) {
             runningProcesses[i]->freePages();
+           // cout << runningProcesses[i]->pid << " ended" << endl;
             finishedProcesses.push_back(runningProcesses[i]);
             runningProcesses.erase(runningProcesses.begin()+i);
         }
@@ -85,19 +86,24 @@ vector<Process*> getReadyProcesses(int currentTime, vector<Process*> &processLis
     vector<Process*>::iterator iter;
     Process* currentProcess;
     
+    // We were getting seg faults when deleteing something at an iterator, so instead lets just create a new vector
+    // to hold the remaining processes and assign processList to it
+    vector<Process *> newProcessList;
     for (iter = processList.begin(); iter != processList.end(); ++iter) {
         
         currentProcess = *iter;
         
         if (currentProcess->arrivalTime <= currentTime) {
             readyProcesses.push_back(currentProcess);
-            processList.erase(iter);
+        }
+        else {
+            newProcessList.push_back(currentProcess);
         }
         
     }
     
+    processList = newProcessList;
     return readyProcesses;
-    
 }
 
 // given some number of processes that should be started, give all processes a page
@@ -166,8 +172,10 @@ void referencePages(vector<Process*> runningProcesses, PageReplacer* replacer, F
         
         currentProcess = *iter;
         
+        Page *newPage = NULL;
         int nextPage = currentProcess->getNextPageIndex();
-        Page *newPage = freeList->getPageWithId(nextPage);
+        newPage = freeList->getPageWithId(nextPage);
+        
         hit = currentProcess->referencePage(replacer, newPage);
         
         if (hit) {
@@ -203,11 +211,13 @@ void runSimulation(PageReplacer *replacer) {
     checkFreeList(freeList);
     checkProcessList(processList);
     
+    printer::printProcessList(processList);
+    
     vector<Process *> runningProcesses;
     
     // loop to run for one minute, measured in milliseconds
     for (int milliseconds = 0 ; milliseconds < 60000 ; ++milliseconds) {
-        cout << "time: " << milliseconds << endl;
+       // cout << "time: " << milliseconds << endl;
         if (!runningProcesses.empty()) {
             // processes are running right now
             // need to check their service duration
@@ -217,62 +227,34 @@ void runSimulation(PageReplacer *replacer) {
         
         // Get new processes and start them
         vector<Process*> readyProcesses = getReadyProcesses(milliseconds, processList);
+       
+        // initialization logic for the new processes with the freelist
         vector<Process*> initializedProcesses = startReadyProcesses(readyProcesses, freeList, milliseconds);
         
         // Add the new running processes to the running process list
-        
-        
-        for (auto p : initializedProcesses) {
-            
-            runningProcesses.push_back(p);
+        for (int i = 0; i < initializedProcesses.size(); i++) {
+            runningProcesses.push_back(initializedProcesses[i]);
         }
         
-        
-        /*
-        vector<Process*>::iterator iter;
-        for (iter = initializedProcesses.begin(); iter != initializedProcesses.end(); ++iter) {
-            
-            Process* currentProcess = *iter;
-            
-            if (find(runningProcesses.begin(), runningProcesses.end(), currentProcess) == runningProcesses.end()) {
-                runningProcesses.push_back(currentProcess);
-                // initializedProcesses.erase(iter);
-                // print single process getting added
-            }
-            
-        }
-        
-        if (!initializedProcesses.empty()) {
-            
-            vector<Process*>::iterator iter;
-            for (iter = initializedProcesses.begin(); iter != initializedProcesses.end(); ++iter) {
-                
-                Process* currentProcess = *iter;
-                
-                if (find(processList.begin(), processList.end(), currentProcess) == processList.end()) {
-                    processList.push_back(currentProcess);
-                }
-                
-            }
-            
-            initializedProcesses.clear();
-            
-        }
-         */
-        
-        printer::printStartedProcesses(milliseconds, runningProcesses, freeList);
+        // we pass in initialized processes because we need to just show the ones which started
+        printer::printStartedProcesses(milliseconds, initializedProcesses, freeList);
 
-         
+        
+        // I do not think we need this
         // deletes the processes from the process list
-        processList = updateRemainingProcesses(processList, runningProcesses);
+        // processList = updateRemainingProcesses(processList, runningProcesses);
         
         // if 100 milliseconds have passed each process should reference a
         // new page in it's address space
-        if ((milliseconds % 100 == 0) && (milliseconds != 0)) {
-            
-            // replacer needs to be passed so that the process knows which page to evict
-            referencePages(runningProcesses, replacer, freeList);
-            
+        
+        
+        // Iterate through the list of processes and check if it needs a reference.
+        for (int i = 0; i < runningProcesses.size(); i++) {
+            Process *cur = runningProcesses[i];
+            int time_diff = milliseconds - cur->startTime;
+            if (time_diff % 100 == 0) {
+                referencePages(runningProcesses, replacer, freeList);
+            }
         }
         
     }
@@ -326,10 +308,13 @@ int main(int argc, char* argv[]) {
     
     for (iter = replacementAlgorithms.begin(); iter != replacementAlgorithms.end(); ++iter) {
         
+        
+        // for (int i = 0; i < 5; i++) {
         printer::printReportHeader((*iter)->replacerID);
         runSimulation(*iter);
         // clearGlobals();
         printer::printReportFooter();
+        // }
     }
     
 	return 0;

@@ -16,7 +16,6 @@ FreeList::FreeList() {
         
         Page* newPage = new Page(i);
 
-        
         if (head == NULL) {
             head = newPage;
             tail = head;
@@ -24,7 +23,7 @@ FreeList::FreeList() {
             tail->next = newPage;
             tail = tail->next;
         }
-        
+        tail->next = NULL;
     }
     
     tail->next = NULL;
@@ -37,6 +36,8 @@ Page* FreeList::getFreePage() {
     Page* currentPage = this->head;
     
     while (currentPage != NULL) {
+        
+        // Page not being used by a process
         if (currentPage->processID < 0) {
             return currentPage;
         }
@@ -79,6 +80,7 @@ Page* FreeList::getPageWithId(int id) {
         cur=cur->next;
     }
     
+    cerr << "id " << id << " is not in the freelist" << endl;
     return NULL;
 }
 

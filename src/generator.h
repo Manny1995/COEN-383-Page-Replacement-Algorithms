@@ -34,7 +34,7 @@ namespace generator {
         
         // NOT SURE ABOUT THIS, ASSUMING BECAUSE WE RUN FOR A MINUTE?
         // int arrivalTime = rand() % 60;
-        int arrivalTime = rand() % 60000;    // units in ms
+        int arrivalTime = rand() % 60 * 1000;    // units in ms
         
         int serviceDuration = ((rand() % 5) + 1) * 1000;
         

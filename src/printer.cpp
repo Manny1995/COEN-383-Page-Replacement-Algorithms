@@ -42,32 +42,61 @@ void printer::printMemoryMap(FreeList *fl) {
 }
 
 void printer::printProcessStarted(int timestamp, Process *p, FreeList *fl) {
-    cout << "TIMESTAMP - " << timestamp << endl;
-    cout << "PROCESS STARTED " << endl;
+    
     cout << "Process name is " << p->pid << ", its size in pages is " << p->size << " and service duration is " << p->serviceDuration << " ms." << endl;
-    printMemoryMap(fl);
 }
 
 // <time stamp, process name, Enter/exit, Size in Pages, Service Duration, Memory-map>.
 void printer::printProcessEnded(int timestamp, Process *p, FreeList *fl) {
-    cout << "TIMESTAMP - " << timestamp << endl;
-    cout << "PROCESS COMPLETED " << endl;
     cout << "Process name was " << p->pid << ", its size in pages was " << p->size << " and service duration was " << p->serviceDuration << endl;
-    printMemoryMap(fl);
-    
 }
 
 void printer::printFinishedProcesses(int timestamp, vector<Process *> finishedProcesses, FreeList *fl) {
-    for (auto p : finishedProcesses) {
+    
+    if (finishedProcesses.size() == 0) {
+        return;
+    }
+    
+    cout << "Batch of processes which have ended at " << timestamp << endl;
+    cout << "-----------------------------------" << endl;
+    for (int i = 0; i < finishedProcesses.size(); i++) {
+        Process *p = finishedProcesses[i];
         printProcessEnded(timestamp, p, fl);
     }
+    printMemoryMap(fl);
+    cout << "-----------------------------------" << endl;
+
 }
 
 void printer::printStartedProcesses(int timestamp, vector<Process *>startedProcesses, FreeList *fl) {
-    for (auto p : startedProcesses) {
-        printProcessStarted(timestamp, p, fl);
+    
+    if (startedProcesses.size() == 0) {
+        return;
     }
+    
+    cout << "Batch of processes which have started at " << timestamp << endl;
+    cout << "-----------------------------------" << endl;
+    for (int i = 0; i < startedProcesses.size(); i++) {
+        Process *p = startedProcesses[i];
+        printProcessEnded(timestamp, p, fl);
+    }
+    printMemoryMap(fl);
+    cout << "-----------------------------------" << endl;
 }
+
+void printer::printProcessList(vector<Process *>processList) {
+    cout << "|  pid     |   size        |  arriv    |   dur     |" << endl;
+    cout << "-------------------------------------------" << endl;
+    
+    for (int i = 0; i < processList.size(); i++) {
+        Process *cur = processList[i];
+        cout << "|   " << cur->pnum << "        |   " << cur->size << "     |   " << cur->arrivalTime << "      |   " << cur->serviceDuration << "      |" << endl;
+        
+    }
+    cout << "-------------------------------------------" << endl;
+
+}
+
 
 
 #endif

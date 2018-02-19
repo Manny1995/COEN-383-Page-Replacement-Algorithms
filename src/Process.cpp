@@ -32,11 +32,23 @@ int Process::getNextPageIndex() {
     }
     else {
         newPage = rand() % 100;
+
     }
+    
+    if (newPage >= 100) {
+        newPage = 99;
+    }
+    
     return newPage;
 }
 
 bool Process::referencePage(PageReplacer* replacer, Page *newPage) {
+    
+    if (newPage == NULL) {
+        //cerr << "TRYING TO REFERENCE A NULL PAGE" << endl;
+        return false;
+        
+    }
     
     this->currentPage = newPage->pageID;
     

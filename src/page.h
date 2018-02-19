@@ -32,27 +32,6 @@ public:
     Page();
     Page(int i);
     
-    /*
-    Page() {
-        this->identifier = "NO ID";
-        this->pageID = -1;
-        this->refCount = 0;
-        this->processID = -1;
-        this->next = NULL;
-    }
-    
-    void assignProcessOwner(Process* newOwner, int newID) {
-        this->pageID = newID;
-        this->refCount++;
-        this->processID = newOwner->pnum;
-    }
-    
-    // Takes in a page size in MB
-    Page(string identifier) {
-        Page();
-        this->identifier = identifier;
-    }
-     */
     
 };
 

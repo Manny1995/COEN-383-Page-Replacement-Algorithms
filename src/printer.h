@@ -24,5 +24,6 @@ namespace printer {
     void printProcessEnded(int timestamp, Process *p, FreeList *fl);
     void printFinishedProcesses(int timestamp, vector<Process *> finishedProcesses, FreeList *fl);
     void printStartedProcesses(int timestamp, vector<Process *>startedProcesses, FreeList *fl);
+    void printProcessList(vector<Process *>processList);
 }
 #endif

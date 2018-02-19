@@ -24,7 +24,6 @@ Page* LRU::evictPage(list<Page*> &pageList) {
             lruTime = currentPage->lastTimeReferenced;
             targetPagePosition = iter;
         }
-        
     }
     
     // check if usage is correct
@@ -33,7 +32,6 @@ Page* LRU::evictPage(list<Page*> &pageList) {
     return lruPage;
     
 }
-
 
 
 #endif
