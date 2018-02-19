@@ -27,5 +27,7 @@ namespace printer {
     void printProcessList(vector<Process *>processList);
     void printHit(Process *currentProcess, int timestamp, Page *newPage);
     void printMiss(Process *currentProcess, int timestamp, Page *newPage, Page *evictedPage);
+    void printAverageStats(int totalSwaps, int totalHits, int totalMisses);
+    
 }
 #endif

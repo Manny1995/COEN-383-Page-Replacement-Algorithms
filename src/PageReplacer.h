@@ -23,12 +23,12 @@ public:
     
     // Takes in a page list and returns the evicted page
     // virtual Page* evictPage(PageList *pageList);
-    Page* evictPage(list<Page*> pageList);
-    Page *evictFIFO(list<Page *>pageList);
-    Page *evictLRU(list<Page *>pageList);
-    Page *evictLFU(list<Page *>pageList);
-    Page *evictRAND(list<Page *>pageList);
-    Page *evictMFU(list<Page *>pageList);
+    Page* evictPage(list<Page*> &pageList);
+    Page *evictFIFO(list<Page *> &pageList);
+    Page *evictLRU(list<Page *> &pageList);
+    Page *evictLFU(list<Page *> &pageList);
+    Page *evictRAND(list<Page *> &pageList);
+    Page *evictMFU(list<Page *> &pageList);
     PageReplacer();
     PageReplacer(string s);
 };

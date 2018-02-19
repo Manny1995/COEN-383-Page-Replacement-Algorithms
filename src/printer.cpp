@@ -23,8 +23,6 @@ void printer::printReportFooter() {
     
 }
 
-
-
 void printer::printMemoryMap(FreeList *fl) {
     Page *cur = fl->head;
     cout << "PRINTING MEMORY MAP" << endl;
@@ -115,6 +113,13 @@ void printer::printMiss(Process *currentProcess, int timestamp, Page *newPage, P
     cout << ss.str() << endl;
 }
 
+void printer::printAverageStats(int totalSwaps, int totalHits, int totalMisses) {
+    cout << "AVERAGES STATS OF 5 RUNS" << endl;
+    cout << "------------------------" << endl;
+    cout << "Average swaps  = " << totalSwaps / 5 << endl;
+    cout << "Average hits = " << totalHits / 5 << endl;
+    cout << "Average misses = " << totalMisses / 5 << endl;
+}
 
 
 #endif

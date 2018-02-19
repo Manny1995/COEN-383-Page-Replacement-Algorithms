@@ -8,7 +8,7 @@ PageReplacer::PageReplacer() {
     replacerID = "No ID";
 }
 
-Page* PageReplacer::evictPage(list<Page*> pageList){
+Page* PageReplacer::evictPage(list<Page*> &pageList){
     
     Page *res = NULL;
     
@@ -33,14 +33,14 @@ Page* PageReplacer::evictPage(list<Page*> pageList){
     
 }
 
-Page *PageReplacer::evictFIFO(list<Page *>pageList) {
+Page *PageReplacer::evictFIFO(list<Page *> &pageList) {
     cout << "FIFO BEING EVICTED" << endl;
     Page* firstPage = *(pageList.begin());
     pageList.pop_front();
     return firstPage;
 }
 
-Page *PageReplacer::evictLRU(list<Page *>pageList) {
+Page *PageReplacer::evictLRU(list<Page *> &pageList) {
     list<Page*>::iterator iter;
     list<Page*>::iterator targetPagePosition;
     Page* currentPage;
@@ -64,7 +64,7 @@ Page *PageReplacer::evictLRU(list<Page *>pageList) {
     return lruPage;
 }
 
-Page *PageReplacer::evictLFU(list<Page *>pageList) {
+Page *PageReplacer::evictLFU(list<Page *> &pageList) {
     list<Page*>::iterator iter;
     list<Page*>::iterator targetPagePosition;
     Page* currentPage;
@@ -90,7 +90,7 @@ Page *PageReplacer::evictLFU(list<Page *>pageList) {
     
 }
 
-Page *PageReplacer::evictRAND(list<Page *>pageList) {
+Page *PageReplacer::evictRAND(list<Page *> &pageList) {
     int displacement = rand() % pageList.size();
     list<Page*>::iterator iter = pageList.begin();
     
@@ -102,7 +102,7 @@ Page *PageReplacer::evictRAND(list<Page *>pageList) {
     
     return randPage;
 }
-Page *PageReplacer::evictMFU(list<Page *>pageList) {
+Page *PageReplacer::evictMFU(list<Page *> &pageList) {
     list<Page*>::iterator iter;
     list<Page*>::iterator targetPagePosition;
     Page* currentPage;

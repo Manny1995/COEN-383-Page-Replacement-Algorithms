@@ -44,13 +44,16 @@ int Process::getNextPageIndex() {
     return newPage;
 }
 
-bool Process::referencePage(PageReplacer* replacer, Page *newPage, int timestamp, Page* evictedPage) {
+bool Process::referencePage(PageReplacer* replacer, Page *newPage, int timestamp, Page* &evictedPage) {
     
     evictedPage = NULL;
     
     this->currentPage = newPage->pageID;
     
-    for (auto page : this->pages) {
+    list<Page *>::iterator iter;
+
+    for (iter = pages.begin(); iter != pages.end(); ++iter) {
+        Page *page = *iter;
         if (page->pageID == this->currentPage) {
             page->timesReferenced++;
             page->lastTimeReferenced = 0;
@@ -61,7 +64,13 @@ bool Process::referencePage(PageReplacer* replacer, Page *newPage, int timestamp
     }
     
     if (pages.size() == size) {
+     //   int temp = pages.size();
         evictedPage = replacer->evictPage(pages);
+      //  int temp2 = pages.size();
+        
+      //  cerr << temp << "   " << temp2 << endl;
+        
+        
     }
     
     newPage->timesReferenced = 1;

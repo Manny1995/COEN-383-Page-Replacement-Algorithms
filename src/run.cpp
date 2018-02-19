@@ -23,6 +23,8 @@
 #include "printer.h"
 
 
+#define NUM_EXPERIMENTS 5
+
 #define STARTING_PAGE_ID 0
 
 using namespace std;
@@ -47,6 +49,7 @@ void processFinished(PageList *freeList, Process *terminatedProcess) {
  */
 int totalMisses = 0;
 int totalHits = 0;
+int totalSwaps = 0;
 
 // modifies the list for current processes
 vector<Process *> removeFinishedProcesses(vector<Process*> &runningProcesses, int currentTime) {
@@ -54,7 +57,6 @@ vector<Process *> removeFinishedProcesses(vector<Process*> &runningProcesses, in
     vector<Process *>finishedProcesses;
     
     vector<Process*>::iterator iter;
-    Process* currentProcess;
     int calculatedEndTime;
     
     for (int i = 0; i < runningProcesses.size(); i++) {
@@ -181,6 +183,10 @@ void referencePages(vector<Process*> runningProcesses, PageReplacer* replacer, F
             printer::printMiss(currentProcess, timestamp, newPage, evictedPage);
             totalMisses++;
         }
+        
+        if (evictedPage != NULL) {
+            totalSwaps++;
+        }
     }
 }
 
@@ -194,9 +200,8 @@ void checkFreeList(FreeList *freeList) {
 }
 
 void checkProcessList(vector<Process *> processList) {
-    int i = 0;
-    for (auto p : processList) {
-        cerr << "arrival time: " << p->arrivalTime << endl;
+    for (int i = 0; i < processList.size(); i++) {
+        cerr << "arrival time: " << processList[i]->arrivalTime << endl;
         i++;
     }
 }
@@ -206,8 +211,8 @@ void runSimulation(PageReplacer *replacer) {
     FreeList* freeList = new FreeList();
     vector<Process *> processList = generator::generateProcessList();
 
-    checkFreeList(freeList);
-    checkProcessList(processList);
+//    checkFreeList(freeList);
+//    checkProcessList(processList);
     
     printer::printProcessList(processList);
     
@@ -263,27 +268,26 @@ int main(int argc, char* argv[]) {
     
     srand(time(NULL));
 
-//    if (argc != 2) {
-//        cout << "Please enter an argument:" << endl;
-//        help();
-//        return -1;
-//    }
-//
-//    string choice = string(argv[1]);
-    
-    string choice = "rand";
+    if (argc != 2) {
+        cout << "Please enter an argument:" << endl;
+        help();
+        return -1;
+    }
+
+    string choice = string(argv[1]);
     
     
     list<PageReplacer*> replacementAlgorithms;
     
-	if (choice == "all") {
-        replacementAlgorithms.push_back(new PageReplacer(FIFO_IDENTIFIER));
-        replacementAlgorithms.push_back(new PageReplacer(LRU_IDENTIFIER));
-        replacementAlgorithms.push_back(new PageReplacer(LFU_IDENTIFIER));
-        replacementAlgorithms.push_back(new PageReplacer(MFU_IDENTIFIER));
-        replacementAlgorithms.push_back(new PageReplacer(RAND_IDENTIFIER));
-	}
-	else if (choice == "fifo") {
+//    if (choice == "all") {
+//        replacementAlgorithms.push_back(new PageReplacer(FIFO_IDENTIFIER));
+//        replacementAlgorithms.push_back(new PageReplacer(LRU_IDENTIFIER));
+//        replacementAlgorithms.push_back(new PageReplacer(LFU_IDENTIFIER));
+//        replacementAlgorithms.push_back(new PageReplacer(MFU_IDENTIFIER));
+//        replacementAlgorithms.push_back(new PageReplacer(RAND_IDENTIFIER));
+//    }
+//	else
+    if (choice == "fifo") {
         replacementAlgorithms.push_back(new PageReplacer(FIFO_IDENTIFIER));
 	}
 	else if (choice == "lru") {
@@ -307,16 +311,19 @@ int main(int argc, char* argv[]) {
     
     for (iter = replacementAlgorithms.begin(); iter != replacementAlgorithms.end(); ++iter) {
         
+        for (int i = 0; i < NUM_EXPERIMENTS; i++) {
+            cout << "Starting Sim " << i << endl;
+            printer::printReportHeader((*iter)->replacerID);
+            runSimulation(*iter);
+            // clearGlobals();
+            printer::printReportFooter();
+        }
         
-        // for (int i = 0; i < 5; i++) {
-        printer::printReportHeader((*iter)->replacerID);
-        runSimulation(*iter);
-        // clearGlobals();
-        printer::printReportFooter();
-        // }
     }
     
+    printer::printAverageStats(totalSwaps, totalHits, totalMisses);
 	return 0;
 
 }
+
 
